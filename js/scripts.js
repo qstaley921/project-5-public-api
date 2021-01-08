@@ -12,7 +12,6 @@ const personNodes = [];
 // ----------------------------------
 
 window.addEventListener('load', () => {
-    const gallery = new Gallery;
     fetch(`https://randomuser.me/api/?results=${personCount}&nat=us`)
         .then(response => response.json())
         .then(json => json.results)
@@ -22,7 +21,6 @@ window.addEventListener('load', () => {
             gallery.genGallery();
             gallery.genSearch();
             gallery.genListeners();
-
         })
 });
 

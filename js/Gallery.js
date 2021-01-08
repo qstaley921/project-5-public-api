@@ -57,16 +57,16 @@ class Gallery {
      * - select each person '.card' node and push() to personNodes[] (global-variable)
      */
     genGallery() {
-        this.filteredPersons = [];
+        this.filteredPersons = []; // resets who is filtered upon loading
         this.persons.forEach(person => {
             const name = person.fullName.toLowerCase();
-            if (name.includes(this.filter)) {
-                galleryNode.appendChild(person.htmlNode);
-                this.filteredPersons.push(person);
+            if (name.includes(this.filter)) { // tests name against input.value (this.filter)
+                galleryNode.appendChild(person.htmlNode); // appends only children who pass
+                this.filteredPersons.push(person); // adds to a new list of filtered person Objects to be used for modal functionality
             } 
             
         }); 
-        personNodes.push(document.querySelectorAll('.card'));
+        personNodes.push(document.querySelectorAll('.card')); // stores nodes once page is loaded, which is a global variable stored in 'scripts.js'
     }
 
     genSearch() {
@@ -88,7 +88,6 @@ class Gallery {
         inputNode.className = 'search-input';
         inputNode.placeholder = 'Search Name . . . ';
         submitNode.type = 'submit';
-        // submitNode.value = '&#x1F50D;';
         submitNode.id = 'search-submit';
         submitNode.class = 'search-submit';
         iconNode.className = 'fas fa-search';
@@ -169,9 +168,9 @@ class Gallery {
                     this.activeModal = false;
                 }
 
-                if(target.id === 'modal-prev') {
+                if(target.id === 'modal-prev' || target.id === 'prev-icon') {
                     this.changeModal(-1);
-                } else if (target.id === 'modal-next') {
+                } else if (target.id === 'modal-next' || target.id === 'next-icon') {
                     this.changeModal(1);
                 }
             }
@@ -205,7 +204,7 @@ class Gallery {
     changeModal(direction) {
         let complete = false;
         for (let i = 0; i < this.filteredPersons.length; i++) {
-            let person = this.filteredPersons[i];
+            const person = this.filteredPersons[i];
             if(person === this.activePerson && this.filteredPersons.length > 1) {
                 const currentIndex = this.filteredPersons.indexOf(person);
                 let newIndex = currentIndex + direction;
@@ -226,4 +225,3 @@ class Gallery {
         }
     }
 }
-

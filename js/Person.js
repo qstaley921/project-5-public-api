@@ -92,9 +92,7 @@ class Person {
         const pDOBNode = document.createElement('p');
         const btnContainerNode = document.createElement('div');
         const prevNode = document.createElement('button');
-        const prevIconNode = document.createElement('i');
         const nextNode = document.createElement('button');
-        const nextIconNode = document.createElement('i');
 
         // ----------------------------------
         //  ADD META-DATA & INNER TEXT
@@ -139,13 +137,14 @@ class Person {
         prevNode.type = 'button';
         prevNode.id = 'modal-prev';
         prevNode.className = 'modal-prev btn';
-        prevNode.innerText = 'Prev';
-        prevNode.dataset.object = this.index;
+        prevNode.innerHTML = `<i data-object='${this.index}' id='prev-icon' class="fas fa-arrow-alt-circle-left"></i> Prev`; 
+        prevNode.dataset.object = this.index; 
         nextNode.type = 'button';
         nextNode.id = 'modal-next';
         nextNode.className = 'modal-next btn';
-        nextNode.innerText = 'Next';
+        nextNode.innerHTML = `Next <i data-object='${this.index}' id='next-icon' class="fas fa-arrow-alt-circle-right"></i>`;
         nextNode.dataset.object = this.index;
+        
 
         // ----------------------------------
         //  APPEND TO DOM - inside to out
