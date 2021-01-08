@@ -8,6 +8,7 @@ class Person {
         this.gender = gender; // string
         this.location = location; // object
         this.name = name; // object
+        this.fullName = `${this.name.first} ${this.name.last}`;
         this.img = img; // object
         this.index = `person-${index}`;
         this.active = false;
@@ -44,7 +45,7 @@ class Person {
         h3Node.className = 'card-name cap';
         h3Node.dataset.object = this.index;
         h3Node.id = 'name';
-        h3Node.innerText = `${this.name.first} ${this.name.last}`;
+        h3Node.innerText = `${this.fullName}`;
         pEmailNode.className = 'card-text';
         pEmailNode.dataset.object = this.index;
         pEmailNode.innerText = `${this.email}`;
@@ -89,11 +90,17 @@ class Person {
         const pCellNode = document.createElement('p');
         const pLocationNode = document.createElement('p');
         const pDOBNode = document.createElement('p');
+        const btnContainerNode = document.createElement('div');
+        const prevNode = document.createElement('button');
+        const prevIconNode = document.createElement('i');
+        const nextNode = document.createElement('button');
+        const nextIconNode = document.createElement('i');
 
         // ----------------------------------
         //  ADD META-DATA & INNER TEXT
         // ----------------------------------
         modalContainerNode.className = 'modal-container';
+        modalContainerNode.dataset.object = `not-an-object`;
         modalNode.className = 'modal';
         modalNode.dataset.object = this.index;
         btnNode.type = 'button';
@@ -111,7 +118,7 @@ class Person {
         h3Node.id = 'name';
         h3Node.dataset.object = this.index;
         h3Node.className = 'modal-name cap';
-        h3Node.innerText = `${this.name.first} ${this.name.last}`;
+        h3Node.innerText = `${this.fullName}`;
         pEmailNode.className = 'modal-text';
         pEmailNode.dataset.object = this.index;
         pEmailNode.innerText = `${this.email}`;
@@ -127,6 +134,18 @@ class Person {
         pDOBNode.className = 'modal-text';
         pDOBNode.dataset.object = this.index;
         pDOBNode.innerText = `Birthday: ${this.getDOB()}`;
+        btnContainerNode.className = 'modal-btn-container';
+        btnContainerNode.dataset.object = this.index;
+        prevNode.type = 'button';
+        prevNode.id = 'modal-prev';
+        prevNode.className = 'modal-prev btn';
+        prevNode.innerText = 'Prev';
+        prevNode.dataset.object = this.index;
+        nextNode.type = 'button';
+        nextNode.id = 'modal-next';
+        nextNode.className = 'modal-next btn';
+        nextNode.innerText = 'Next';
+        nextNode.dataset.object = this.index;
 
         // ----------------------------------
         //  APPEND TO DOM - inside to out
@@ -151,10 +170,11 @@ class Person {
         //             <button type="button" id="modal-next" class="modal-next btn">Next</button>
         //         </div>
         // </div>
-    
+        
         infoNode.append(imgNode, h3Node, pEmailNode, pCityNode, hRuleNode, pCellNode, pLocationNode, pDOBNode);
         modalNode.append(btnNode, infoNode);
-        modalContainerNode.append(modalNode);
+        btnContainerNode.append(prevNode, nextNode);
+        modalContainerNode.append(modalNode, btnContainerNode);
         return modalContainerNode;
         
     }

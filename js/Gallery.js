@@ -1,26 +1,19 @@
 
 
 class Gallery {
-    constructor() {
-        this.personCount = '12';
+    constructor(data) {
+        this.json = data;
         this.persons = []; // will hold an array of Person Objects
+        this.filteredPersons = []; // will hold an array of Person Objects that match search result
         this.activePerson = null;
         this.activeModal = false;
+        this.formDOM = null;
+        this.filter = '';
     }
 
     // ----------------------------------
     //  METHODS
     // ----------------------------------
-
-    fetchData() {
-        fetch(`https://randomuser.me/api/?results=${this.personCount}&nat=us`)
-            .then(response => response.json())
-            // .then(data => console.log(data.results))
-            .then(data => this.genPersons(data.results))
-            .then(() => this.genGallery())
-            .then(() => this.genSearch())
-            .then(() => this.genListeners())
-    }
 
     // ! Add a catch above, and then create an error report below 
     reportError() {
@@ -32,9 +25,9 @@ class Gallery {
      * - Then pushes the Person object to this.persons
      * @param {json} data | a JSON object from a FETCH request
      */
-    genPersons(data) {
+    genPersons() {
         // console.log(data);
-        const json = data;
+        const json = this.json;
         let cell = '';
         let dob = null;
         let email = '';
@@ -64,10 +57,53 @@ class Gallery {
      * - select each person '.card' node and push() to personNodes[] (global-variable)
      */
     genGallery() {
+        this.filteredPersons = [];
         this.persons.forEach(person => {
-            galleryNode.appendChild(person.htmlNode);
+            const name = person.fullName.toLowerCase();
+            if (name.includes(this.filter)) {
+                galleryNode.appendChild(person.htmlNode);
+                this.filteredPersons.push(person);
+            } 
+            
         }); 
         personNodes.push(document.querySelectorAll('.card'));
+    }
+
+    genSearch() {
+        // ----------------------------------
+        //  CREATE ELEMENTS
+        // ----------------------------------
+        const formNode = document.createElement('form');
+        const inputNode = document.createElement('input');
+        const submitNode = document.createElement('button');
+        const iconNode = document.createElement('i');
+
+        // ----------------------------------
+        //  ADD META-DATA & INNER TEXT
+        // ----------------------------------
+        formNode.action = '#'; 
+        formNode.method = 'get';
+        inputNode.type = 'search';
+        inputNode.id = 'search-input';
+        inputNode.className = 'search-input';
+        inputNode.placeholder = 'Search Name . . . ';
+        submitNode.type = 'submit';
+        // submitNode.value = '&#x1F50D;';
+        submitNode.id = 'search-submit';
+        submitNode.class = 'search-submit';
+        iconNode.className = 'fas fa-search';
+
+        // ----------------------------------
+        //  APPEND TO DOM
+        // ----------------------------------
+        // <form action="#" method="get">
+        //     <input type="search" id="search-input" class="search-input" placeholder="Search...">
+        //     <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit fas fa-camera">
+        // </form>
+        submitNode.append(iconNode);
+        formNode.append(inputNode, submitNode);
+        searchContainerNode.append(formNode);
+        this.formDOM = document.querySelector('form');
     }
 
     /**
@@ -75,6 +111,9 @@ class Gallery {
      * - if the target === an interated Person from the personsObject array, that person becomes the gallery's `this.activePerson`
      */
     genListeners() {
+        // ----------------------------------
+        //  ACTIVATES MODAL
+        // ----------------------------------
         personNodes[0].forEach(node => {
             node.addEventListener('click', (event) => {
                 let targetAttribute = event.target.getAttribute('data-object');
@@ -89,24 +128,102 @@ class Gallery {
             });
         });
 
+        // adds another event listener when the Modal is Active to close the modal on 'outside' click
         document.addEventListener('click', (event) => {
             const target = event.target;
-            const targetAttribute = target.getAttribute('data-object');
-            const activeAttribute = this.activePerson.index;
-            console.log(target);
+            // ----------------------------------
+            //  SEARCH BEHAVIOR ON CLICK, for deleting results
+            // ----------------------------------
+            if(target === this.formDOM.firstChild) { // if the form's input is clicked
+                if(event.target.value.length > 0) { // i.e. if there is input text
+                    this.formDOM.firstChild.addEventListener('input', () => { // if the input is changed
+                        if(this.formDOM.firstChild.value.length < 1) { // if the input is empty
+                            this.filter = ''; // reset the filter results to filter nothing
+                            this.refreshPage(); // reset the page
+                        }
+                    });
+                }
+            }
+            
+            // ----------------------------------
+            //  DEACTIVATES MODAL
+            // ----------------------------------
+            let targetAttribute = '';
+            let activeAttribute = '';
+
+            // for closing modals
             if(this.activeModal) {
-                if(target.nodeName === 'BUTTON' || targetAttribute !== activeAttribute) {
+
+                if (target.hasAttribute('data-object')) {
+                    targetAttribute = target.getAttribute('data-object');
+                }  
+
+                if (this.activePerson !== null) {
+                    activeAttribute = this.activePerson.index;
+                }
+
+                if(target.id === 'modal-close-btn' || targetAttribute !== activeAttribute) {
                     this.activePerson.active = false;
                     this.activePerson.activateModal();
                     this.activePerson = null;
                     this.activeModal = false;
                 }
+
+                if(target.id === 'modal-prev') {
+                    this.changeModal(-1);
+                } else if (target.id === 'modal-next') {
+                    this.changeModal(1);
+                }
             }
+        });   
+
+        // adds a listener to the form
+        this.formDOM.addEventListener('submit', (event) => {
+            const input = this.formDOM.querySelector('input:first-of-type');
+            const value = input.value;
+            
+            this.filter = value.toLowerCase();
+            this.refreshPage();
+            event.preventDefault();
         });
+
     } // end of gen Listeners
 
-    genSearch() {
+    /**
+     * Refreshes the page, clears all cards, then recalls genGallery()
+     */
+    refreshPage() {
+        const cards = document.querySelectorAll('.card');
+            
+        cards.forEach(card => {
+            card.remove();
+        });
 
+        this.genGallery();
+    }
+
+    changeModal(direction) {
+        let complete = false;
+        for (let i = 0; i < this.filteredPersons.length; i++) {
+            let person = this.filteredPersons[i];
+            if(person === this.activePerson && this.filteredPersons.length > 1) {
+                const currentIndex = this.filteredPersons.indexOf(person);
+                let newIndex = currentIndex + direction;
+
+                if(newIndex === -1) {
+                    newIndex = this.filteredPersons.length - 1;
+                } else if (newIndex === this.filteredPersons.length) {
+                    newIndex = 0;
+                } 
+             
+                this.activePerson.active = false;
+                this.activePerson.activateModal();
+                this.activePerson = this.filteredPersons[newIndex];
+                this.activePerson.active = true;
+                this.activePerson.activateModal();
+                i = this.filteredPersons.length;
+            }
+        }
     }
 }
 
