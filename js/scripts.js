@@ -11,6 +11,10 @@ const personNodes = [];
 //  EVENT LISTENERS
 // ----------------------------------
 
+/**
+ * - fetches API Data on Page Load
+ * - Creates a new Gallery Object, passing the API.response
+ */
 window.addEventListener('load', () => {
     fetch(`https://randomuser.me/api/?results=${personCount}&nat=us`)
         .then(response => response.json())

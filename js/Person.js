@@ -17,6 +17,10 @@ class Person {
         this.modalDOM = null;
     }
 
+    /**
+     * - Creates HTML Nodes based on this.properties 
+     * @return {HTML NODE OBJ} cardNode | stored in this.htmlNode
+     */
     genHTML() {
         // ----------------------------------
         //  CREATE ELEMENTS
@@ -73,6 +77,10 @@ class Person {
         return cardNode;
     } // end of genHTML()
    
+    /**
+     * - Creates Elements, and appends those elements into an HTML Block
+     * @returns {HTML NODE OBJ} modalContainerNode | stored in this.modalNode
+     */
     genModal() {
         // ----------------------------------
         //  CREATE ELEMENTS
@@ -175,9 +183,9 @@ class Person {
         btnContainerNode.append(prevNode, nextNode);
         modalContainerNode.append(modalNode, btnContainerNode);
         return modalContainerNode;
-        
-    }
+    } // end of genModal()
 
+    // Reformats Date-of-birth
     getDOB() {
         const dob = this.dob.date;
         const year = dob.substring(0, 4);
@@ -186,6 +194,7 @@ class Person {
         return `${month}/${day}/${year}`;
     }
 
+    // appends the modal to the document if this.active is true. Otherwise, removes it. 
     activateModal() {
         if (this.active) {
             galleryNode.insertAdjacentElement("afterend", this.modalNode);
