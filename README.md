@@ -27,7 +27,7 @@
 # The 'Flow' of the Program/Run Stack
 
 ## Step 1: Generate the Components
-1. `scripts.js` **runs** a `fetch()` on `window.load` and sents the API JSON results to a `new Gallery(results)` object
+1. `scripts.js` **runs** a `fetch()` on `window.load` and sends the API JSON results to a `new Gallery(results)` object
 2. `.then()` **runs** `gallery.genPersons()`
     - `gallery.genPersons()` **stores** a person object to `gallery.persons[]`
 2. `.then()` **runs** `gallery.genGallery()` 
@@ -47,7 +47,7 @@
             - if `submit` event, change `Gallery.filter` value and **run** `Gallery.refreshPage()`
     3. `click` event on `document`
         - if `gallery.activeModal` is true, one of the correct behaviors will **run**
-             - the Modal will close of `click` is beyond the Modal's `event.target`
+             - the Modal will close if `click` is beyond the Modal's `event.target`
              - the Modal will change to either the previous `person.modal` or the next based on which button was `clicked`, either button with ID `modal-prev` or `modal-next`. If either of these buttons is `clicked`, `gallery.changeModal()` **runs** and the rest is history. 
 
-*That's it. That's the program. Simple enough. Way too messy. Until I know better, I'll strive just to make things work.*
+*That's it. That's the program. Simple enough. Way too messy. Until I know better, I'll strive just to make things work versus making things work in the **BEST** way possible.*

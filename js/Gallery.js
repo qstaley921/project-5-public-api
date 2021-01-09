@@ -15,11 +15,6 @@ class Gallery {
     //  METHODS
     // ----------------------------------
 
-    // ! Add a catch above, and then create an error report below 
-    reportError() {
-
-    }
-
     /**
      * - iterates through a JSON object and adds pertaining properties to a `new Person` object
      * - Then pushes the Person object to this.persons
@@ -57,16 +52,35 @@ class Gallery {
      * - select each person '.card' node and push() to personNodes[] (global-variable)
      */
     genGallery() {
+        let success = false;
+        galleryNode.innerHTML = ''; // resets page before load.
         this.filteredPersons = []; // resets who is filtered upon loading
         this.persons.forEach(person => {
             const name = person.fullName.toLowerCase();
             if (name.includes(this.filter)) { // tests name against input.value (this.filter)
                 galleryNode.appendChild(person.htmlNode); // appends only children who pass
                 this.filteredPersons.push(person); // adds to a new list of filtered person Objects to be used for modal functionality
+                success = true;
             } 
-            
         }); 
         personNodes.push(document.querySelectorAll('.card')); // stores nodes once page is loaded, which is a global variable stored in 'scripts.js'
+        if (!success) {
+            galleryNode.innerHTML = `
+            <div id="report-error">
+                <h3>Yikes! Delete and try again. </h3>
+                <div class="image-frame"></div>
+                <button id='reload-btn'><i class="fas fa-backspace"></i></button>
+            </div>`;
+
+            const button = document.querySelector('#reload-btn');
+            const input = document.querySelector('#search-input');
+            button.addEventListener('click', () => {
+                this.filter = '';
+                input.value = '';
+                this.genGallery();
+            });
+            
+        }
     }
 
     genSearch() {

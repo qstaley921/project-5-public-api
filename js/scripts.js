@@ -22,6 +22,17 @@ window.addEventListener('load', () => {
             gallery.genSearch();
             gallery.genListeners();
         })
-});
+        .catch(() => {
+            galleryNode.innerHTML = `
+            <div id="report-error">
+                <h3>Yikes! Your results failed to load. Try refreshing the page. </h3>
+                <div class="image-frame"></div>
+                <button id='reload-btn'><i class="fas fa-redo-alt"></i></button>
+            </div>`;
 
- 
+            const button = document.querySelector('#reload-btn');
+            button.addEventListener('click', () => {
+                location.reload();
+            });
+        })
+});
